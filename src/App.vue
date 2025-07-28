@@ -1,30 +1,31 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { useUserStore } from '@/stores/user'
+import { NLayout, NLayoutHeader, NLayoutContent, NSpace, NButton } from 'naive-ui'
+
+const userStore = useUserStore()
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <n-layout>
+    <n-layout-header bordered>
+      <n-space justify="space-between" align="center" style="padding: 12px 24px;">
+        <n-h2>AI灵感笔记平台</n-h2>
+        <div>
+          <span v-if="userStore.role !== 'guest'">
+            欢迎, {{ userStore.username }} ({{ userStore.role }})
+          </span>
+          <n-button v-if="userStore.role !== 'guest'" @click="userStore.logout" size="small">
+            退出
+          </n-button>
+          <n-button v-else to="/login" size="small">
+            登录
+          </n-button>
+        </div>
+      </n-space>
+    </n-layout-header>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+    <n-layout-content>
+      <router-view />
+    </n-layout-content>
+  </n-layout>
+</template>
