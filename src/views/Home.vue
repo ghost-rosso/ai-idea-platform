@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user.js'
 import IdeaTree from '@/components/idea/IdeaTree.vue'
 import MarkdownEditor from '@/components/idea/MarkdownEditor.vue'
 import AISuggestionPanel from '@/components/ai/AISuggestionPanel.vue'
@@ -38,4 +38,21 @@ onMounted(async () => {
       <ai-suggestion-panel v-if="currentIdea" :keyword="currentIdea.title" />
     </n-layout-sider>
   </n-layout>
+
+  <n-divider />
+  <n-h2>灵感关联图谱</n-h2>
+  <idea-graph :ideas="ideas" />
 </template>
+
+<style>
+@media (max-width: 768px) {
+  .n-layout-sider {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+
+  .n-layout {
+    flex-direction: column;
+  }
+}
+</style>

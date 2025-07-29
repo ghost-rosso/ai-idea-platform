@@ -1,5 +1,5 @@
 <script setup>
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user.js'
 import { NLayout, NLayoutHeader, NLayoutContent, NSpace, NButton } from 'naive-ui'
 
 const userStore = useUserStore()
@@ -22,6 +22,9 @@ const userStore = useUserStore()
           </n-button>
         </div>
       </n-space>
+      <n-button @click="themeStore.toggleTheme">
+        {{ themeStore.isDark ? '☀️ 亮色' : '🌙 暗色' }}
+      </n-button>
     </n-layout-header>
 
     <n-layout-content>
