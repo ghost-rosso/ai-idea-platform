@@ -1,8 +1,10 @@
 <script setup>
-import { useUserStore } from '@/stores/user.js'
+import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme' // 新增导入
 import { NLayout, NLayoutHeader, NLayoutContent, NSpace, NButton } from 'naive-ui'
 
 const userStore = useUserStore()
+const themeStore = useThemeStore() // 新增初始化
 </script>
 
 <template>
@@ -20,11 +22,13 @@ const userStore = useUserStore()
           <n-button v-else to="/login" size="small">
             登录
           </n-button>
+
+          <!-- 将主题按钮移到此处，与其他按钮同层级 -->
+          <n-button @click="themeStore.toggleTheme" size="small" style="margin-left: 8px;">
+            {{ themeStore.isDark ? '☀️ 亮色' : '🌙 暗色' }}
+          </n-button>
         </div>
       </n-space>
-      <n-button @click="themeStore.toggleTheme">
-        {{ themeStore.isDark ? '☀️ 亮色' : '🌙 暗色' }}
-      </n-button>
     </n-layout-header>
 
     <n-layout-content>
