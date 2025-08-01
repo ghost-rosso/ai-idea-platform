@@ -11,5 +11,5 @@ export default {
       'tags|1-3': ['@word(3,5)'],
       'isPublic': '@boolean'
     }]
-  })
+  }),
 }

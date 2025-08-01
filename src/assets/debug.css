@@ -1,0 +1,32 @@
+/* 调试用背景色 */
+.debug-header {
+  background-color: rgba(100, 108, 255, 0.1) !important;
+  /* 浅蓝紫色 */
+  outline: 2px dashed #646cff !important;
+}
+
+.debug-sider {
+  background-color: rgba(100, 255, 108, 0.1) !important;
+  /* 浅绿色 */
+  outline: 2px dashed #64ff6c !important;
+}
+
+.debug-content {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  /* 半透明白 */
+  outline: 2px dashed #000 !important;
+}
+
+.debug-ai-panel {
+  background-color: rgba(255, 100, 108, 0.1) !important;
+  /* 浅粉红 */
+  outline: 2px dashed #ff646c !important;
+}
+
+/* 子组件区块标记 */
+.debug-component {
+  background-color: rgba(255, 200, 0, 0.1) !important;
+  outline: 2px dashed #ffc800 !important;
+  margin: 4px;
+  padding: 4px;
+}

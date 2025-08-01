@@ -20,7 +20,7 @@ watch(content, (newVal) => {
   <div v-html="content" class="markdown-preview"></div>
 </template>
 
-<style>
+<style scoped>
 .markdown-preview {
   padding: 12px;
   border: 1px solid #eee;
