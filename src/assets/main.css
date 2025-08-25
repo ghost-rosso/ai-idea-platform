@@ -1,0 +1,13 @@
+/* 确保body高度撑满 */
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+/* 字体优化 */
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}

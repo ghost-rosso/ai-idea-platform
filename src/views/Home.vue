@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user.js'
+import { useUserStore } from '@/stores/user'
 import IdeaTree from '@/components/idea/IdeaTree.vue'
 import MarkdownEditor from '@/components/idea/MarkdownEditor.vue'
 import AISuggestionPanel from '@/components/ai/AISuggestionPanel.vue'
+import IdeaGraph from '@/components/idea/IdeaGraph.vue'
 
 const userStore = useUserStore()
 const ideas = ref([])
@@ -21,38 +22,42 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-layout has-sider>
-    <!-- 左侧导航 -->
-    <n-layout-sider width="240" content-style="padding: 24px;">
+  <n-layout-content>
+    <!-- 左侧内容 -->
+    <template v-slot:sidebar>
       <n-h2>我的灵感</n-h2>
       <idea-tree :ideas="ideas" v-model:current="currentIdea" />
-    </n-layout-sider>
+    </template>
 
-    <!-- 中央编辑器 -->
-    <n-layout-content content-style="padding: 24px;">
+    <!-- 中央内容 -->
+    <template v-slot:default> <!-- 使用 default 插槽 -->
       <markdown-editor v-if="currentIdea" v-model="currentIdea.content" />
-    </n-layout-content>
 
-    <!-- 右侧AI面板 -->
-    <n-layout-sider width="300" content-style="padding: 24px;">
+      <n-divider style="margin-top: 24px;" />
+      <n-h2>灵感关联图谱</n-h2>
+      <idea-graph :ideas="ideas" />
+    </template>
+
+    <!-- 右侧内容 -->
+    <template v-slot:ai-panel>
       <ai-suggestion-panel v-if="currentIdea" :keyword="currentIdea.title" />
-    </n-layout-sider>
-  </n-layout>
-
-  <n-divider />
-  <n-h2>灵感关联图谱</n-h2>
-  <idea-graph :ideas="ideas" />
+    </template>
+  </n-layout-content>
 </template>
 
-<style>
+<style scoped>
+/* 移动端适配调整 */
 @media (max-width: 768px) {
-  .n-layout-sider {
-    width: 100% !important;
-    flex: 0 0 100% !important;
+
+  /* 确保内容区在移动端有足够间距 */
+  .n-layout-content {
+    padding: 16px !important;
   }
 
-  .n-layout {
-    flex-direction: column;
+  /* 图谱容器适配 */
+  .idea-graph-container {
+    height: 300px !important;
+    overflow-x: auto;
   }
 }
 </style>

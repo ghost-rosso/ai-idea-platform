@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import naive from 'naive-ui'
+import './assets/main.css'
 
 // 初始化Mock
 import './mock'

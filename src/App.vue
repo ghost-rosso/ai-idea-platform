@@ -1,5 +1,5 @@
 <script setup>
-import { NLayout, NLayoutHeader, NLayoutContent, NLayoutSider, NSpace, NButton, NH2 } from 'naive-ui'
+import { NLayout, NLayoutHeader, NLayoutContent, NLayoutSider, NSpace, NButton, NH2, NH3 } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import '@/assets/debug.css' // 确认路径正确
@@ -33,14 +33,16 @@ const themeStore = useThemeStore()
 
     <!-- 主内容区 -->
     <n-layout has-sider position="absolute" style="top: 64px; bottom: 0;">
-      <!-- 左侧导航栏保持不变 -->
+      <!-- 左侧导航栏 -->
       <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" show-trigger
         content-style="padding: 16px;" class="debug-sider">
+        <n-h3 style="margin-top: 0; margin-bottom: 16px;">我的灵感列表</n-h3>
         <slot name="sidebar"></slot>
       </n-layout-sider>
 
       <!-- 中央内容区 -->
       <n-layout-content content-style="padding: 16px;" class="debug-content">
+        <n-h3 style="margin-top: 0; margin-bottom: 16px;">中央编辑器</n-h3>
         <router-view />
       </n-layout-content>
 
@@ -51,6 +53,7 @@ const themeStore = useThemeStore()
           right: 'unset',
           transform: 'scaleX(-1)'
         }" content-style="padding: 16px;" position="right" class="debug-ai-panel">
+        <n-h3 style="margin-top: 0; margin-bottom: 16px;">AI生成灵感</n-h3>
         <slot name="ai-panel"></slot>
       </n-layout-sider>
     </n-layout>

@@ -1,32 +1,41 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
-import Admin from '../views/Admin.vue'
-import Auth from '../views/Auth.vue'
+import Home from '@/views/Home.vue'
+import Auth from '@/views/Auth.vue'
+
+const routes = [
+  {
+    path: '/',
+    component: Auth,  // 将默认路由改为登录页
+    meta: { guestOnly: true }
+  },
+  {
+    path: '/home',
+    component: Home,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/login',
+    component: Auth,
+    meta: { guestOnly: true }
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    { path: '/', component: Home },
-    { 
-      path: '/admin', 
-      component: Admin,
-      meta: { requiresAdmin: true } 
-    },
-    { path: '/login', component: Auth }
-  ]
+  routes
 })
 
-// 动态路由守卫
-router.beforeEach(async (to) => {
-  // 动态导入避免初始化问题
-  const { useUserStore } = await import('@/stores/user')
+// 路由守卫
+router.beforeEach((to) => {
   const userStore = useUserStore()
   
-  // 检查管理员权限（注意：isAdmin现在是函数）
-  if (to.meta.requiresAdmin && !userStore.isAdmin()) {
+  if (to.meta.requiresAuth && !userStore.token) {
     return '/login'
   }
-  // 否则放行
+  
+  if (to.meta.guestOnly && userStore.token) {
+    return '/'
+  }
 })
 
 export default router

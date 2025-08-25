@@ -1,22 +1,78 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export const useUserStore = defineStore('user', () => {
-  const role = ref(localStorage.getItem('userRole') || 'guest')
-  const username = ref('')
+  const router = useRouter()
+  const token = ref(localStorage.getItem('token'))
+  const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || 'null'))
 
-  const isAdmin = () => role.value === 'admin'
-  
-  const login = (userRole, name) => {
-    role.value = userRole
-    username.value = name
-    localStorage.setItem('userRole', userRole)
+  // 模拟登录API
+  const mockLogin = (data) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (data.username === '13800000000' && data.password === '123456') {
+          const res = {
+            token: 'mock_token_' + Math.random().toString(36).substr(2),
+            user: {
+              username: data.username,
+              role: data.username === '13800000000' ? 'admin' : 'user'
+            }
+          }
+          resolve(res)
+        } else {
+          reject(new Error('手机号或密码错误'))
+        }
+      }, 800)
+    })
   }
-  
+
+  // 模拟注册API
+  const mockRegister = (data) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ success: true })
+      }, 800)
+    })
+  }
+
+  // 登录方法
+  const login = async (data) => {
+    try {
+      const res = await mockLogin(data)
+      token.value = res.token
+      userInfo.value = res.user
+      
+      localStorage.setItem('token', res.token)
+      localStorage.setItem('userInfo', JSON.stringify(res.user))
+      
+      return res
+    } catch (error) {
+      logout()
+      throw error
+    }
+  }
+
+  // 注册方法
+  const register = async (data) => {
+    const res = await mockRegister(data)
+    return res
+  }
+
+  // 退出登录
   const logout = () => {
-    role.value = 'guest'
-    localStorage.removeItem('userRole')
+    token.value = null
+    userInfo.value = null
+    localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
+    router.push('/login')
   }
 
-  return { role, username, isAdmin, login, logout }
+  return { 
+    token,
+    userInfo,
+    login,
+    register,
+    logout
+  }
 })
