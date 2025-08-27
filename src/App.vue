@@ -1,8 +1,7 @@
 <script setup>
-import { NLayout, NLayoutHeader, NLayoutContent, NLayoutSider, NSpace, NButton, NH2, NH3 } from 'naive-ui'
+import { NLayout, NLayoutHeader, NSpace, NButton, NH2 } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
-import '@/assets/debug.css' // 确认路径正确
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
@@ -11,9 +10,9 @@ const themeStore = useThemeStore()
 <template>
   <n-layout style="height: 100vh;">
     <!-- 顶部导航栏 -->
-    <n-layout-header bordered class="debug-header">
-      <n-space justify="space-between" align="center" style="padding: 12px 24px;">
-        <n-h2>AI灵感笔记平台</n-h2>
+    <n-layout-header bordered style="height: 64px;">
+      <n-space justify="space-between" align="center" style="padding: 12px 24px; height: 100%;">
+        <n-h2 style="margin: 0;">AI灵感笔记平台</n-h2>
         <div>
           <span v-if="userStore.role !== 'guest'">
             欢迎, {{ userStore.username }} ({{ userStore.role }})
@@ -31,70 +30,20 @@ const themeStore = useThemeStore()
       </n-space>
     </n-layout-header>
 
-    <!-- 主内容区 -->
-    <n-layout has-sider position="absolute" style="top: 64px; bottom: 0;">
-      <!-- 左侧导航栏 -->
-      <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="240" show-trigger
-        content-style="padding: 16px;" class="debug-sider">
-        <n-h3 style="margin-top: 0; margin-bottom: 16px;">我的灵感列表</n-h3>
-        <slot name="sidebar"></slot>
-      </n-layout-sider>
-
-      <!-- 中央内容区 -->
-      <n-layout-content content-style="padding: 16px;" class="debug-content">
-        <n-h3 style="margin-top: 0; margin-bottom: 16px;">中央编辑器</n-h3>
-        <router-view />
-      </n-layout-content>
-
-      <!-- 右侧边栏 -->
-      <n-layout-sider bordered collapse-mode="width" :collapsed-width="20" :width="300" :show-trigger="true"
-        :trigger-style="{
-          left: '-18px',
-          right: 'unset',
-          transform: 'scaleX(-1)'
-        }" content-style="padding: 16px;" position="right" class="debug-ai-panel">
-        <n-h3 style="margin-top: 0; margin-bottom: 16px;">AI生成灵感</n-h3>
-        <slot name="ai-panel"></slot>
-      </n-layout-sider>
-    </n-layout>
+    <!-- 主要内容区域 (路由页面在这里渲染) -->
+    <n-layout-content style="height: calc(100vh - 64px);">
+      <router-view />
+    </n-layout-content>
   </n-layout>
 </template>
 
 <style scoped>
-/* 基础布局 */
+/* 确保布局正确 */
 .n-layout {
   height: 100vh;
 }
 
-/* 右侧触发器修正 */
-.n-layout-sider--right .n-layout-sider-toggle {
-  left: -18px !important;
-  width: 18px !important;
-  border-right: 1px solid var(--n-border-color);
-  background: var(--n-color);
-}
-
-/* 鼠标悬停时显示完整触发器 */
-.n-layout-sider--right:hover .n-layout-sider-toggle {
-  width: 24px !important;
-  left: -24px !important;
-}
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-  .n-layout-sider--right {
-    right: -100%;
-    transition: right 0.3s;
-  }
-
-  .n-layout-sider--right.n-layout-sider--collapsed {
-    right: calc(20px - 100%);
-    /* 保留20px可拖拽区域 */
-  }
-
-  .n-layout-sider-toggle {
-    display: none;
-    /* 移动端隐藏默认触发器 */
-  }
+.n-layout-content {
+  overflow: hidden;
 }
 </style>
