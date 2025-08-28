@@ -4,6 +4,7 @@ import { ref, onMounted, nextTick, computed, watch } from 'vue'
 import { useNoteStore } from '@/stores/noteStore'
 import * as echarts from 'echarts'
 
+
 const noteStore = useNoteStore()
 const searchKeyword = ref('')
 const showDeleteModal = ref(false)
