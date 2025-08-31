@@ -2,13 +2,15 @@
 import { NLayout, NLayoutSider, NLayoutContent, NH3, NEmpty, NDivider, NButton, NInput, NSpace, NModal } from 'naive-ui'
 import { ref, onMounted, nextTick, computed, watch } from 'vue'
 import { useNoteStore } from '@/stores/noteStore'
+import { simulateAIThinking } from '@/utils/aiMock'
 import * as echarts from 'echarts'
-
 
 const noteStore = useNoteStore()
 const searchKeyword = ref('')
 const showDeleteModal = ref(false)
 const newTag = ref('')
+const isLoadingAI = ref(false)
+const aiResult = ref(null)
 let chartInstance = null
 
 // 过滤后的笔记列表
@@ -65,6 +67,51 @@ const removeTag = (tagToRemove) => {
     const newTags = noteStore.currentNote.tags.filter(tag => tag !== tagToRemove)
     noteStore.updateNote(noteStore.currentNote.id, { tags: newTags })
   }
+}
+
+// AI建议功能
+const generateAISuggestions = async () => {
+  if (!noteStore.currentNote?.content.trim()) return
+
+  isLoadingAI.value = true
+  aiResult.value = null
+
+  // 模拟AI处理延迟
+  await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000))
+
+  try {
+    aiResult.value = simulateAIThinking(noteStore.currentNote.content)
+  } catch (error) {
+    console.error('AI生成失败:', error)
+    aiResult.value = {
+      suggestions: ['生成失败，请重试'],
+      related: [],
+      keywords: ['error']
+    }
+  } finally {
+    isLoadingAI.value = false
+  }
+}
+
+// 应用AI建议到笔记
+const applySuggestion = (suggestion) => {
+  if (noteStore.currentNote) {
+    const newContent = noteStore.currentNote.content + '\n\n## AI建议\n- ' + suggestion
+    noteStore.updateNote(noteStore.currentNote.id, { content: newContent })
+  }
+}
+
+// 应用相关灵感
+const applyRelatedIdea = (idea) => {
+  if (noteStore.currentNote) {
+    const newContent = noteStore.currentNote.content + '\n\n## 相关灵感\n- ' + idea
+    noteStore.updateNote(noteStore.currentNote.id, { content: newContent })
+  }
+}
+
+// 清空AI结果
+const clearAIResults = () => {
+  aiResult.value = null
 }
 
 // 灵感图谱相关函数
@@ -293,10 +340,78 @@ onMounted(() => {
     </n-layout-content>
 
     <!-- 右侧AI面板 -->
-    <n-layout-sider bordered collapse-mode="width" :collapsed-width="20" :width="300" show-trigger
-      content-style="padding: 16px;" position="right">
-      <n-h3 style="margin-top: 0; margin-bottom: 16px;">AI生成灵感</n-h3>
-      <n-empty description="AI功能开发中" />
+    <n-layout-sider bordered collapse-mode="width" :collapsed-width="20" :width="320" show-trigger
+      content-style="padding: 16px; display: flex; flex-direction: column;" position="right">
+
+      <!-- AI面板头部 -->
+      <div style="margin-bottom: 16px;">
+        <n-h3 style="margin-top: 0; margin-bottom: 12px;">🤖 AI灵感助手</n-h3>
+        <n-button type="primary" block @click="generateAISuggestions" :loading="isLoadingAI"
+          :disabled="!noteStore.currentNote?.content?.trim()" size="small">
+          {{ isLoadingAI ? '思考中...' : '💡 生成灵感建议' }}
+        </n-button>
+
+        <n-button v-if="aiResult" size="small" block @click="clearAIResults" style="margin-top: 8px;">
+          清空结果
+        </n-button>
+      </div>
+
+      <!-- AI内容区域 -->
+      <div style="flex: 1; overflow-y: auto;">
+        <!-- 加载状态 -->
+        <div v-if="isLoadingAI" style="text-align: center; padding: 20px;">
+          <n-spin size="small" />
+          <p style="margin: 8px 0 0 0; color: #666; font-size: 12px;">AI正在分析笔记内容...</p>
+        </div>
+
+        <!-- AI建议结果 -->
+        <div v-else-if="aiResult" class="ai-results">
+          <!-- 检测到的关键词 -->
+          <div v-if="aiResult.keywords.length" style="margin-bottom: 16px;">
+            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">检测到关键词</n-h4>
+            <n-space>
+              <n-tag v-for="keyword in aiResult.keywords" :key="keyword" size="small" type="info" :bordered="false">
+                {{ keyword }}
+              </n-tag>
+            </n-space>
+          </div>
+
+          <!-- AI建议 -->
+          <div style="margin-bottom: 16px;">
+            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">AI建议</n-h4>
+            <div class="suggestion-list">
+              <div v-for="(suggestion, index) in aiResult.suggestions" :key="index" class="suggestion-item">
+                <div class="suggestion-text">{{ suggestion }}</div>
+                <n-button size="tiny" @click="applySuggestion(suggestion)" style="margin-top: 4px;">
+                  应用到笔记
+                </n-button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 相关灵感 -->
+          <div v-if="aiResult.related.length">
+            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">相关灵感</n-h4>
+            <n-space vertical :size="6">
+              <n-tag v-for="(idea, index) in aiResult.related" :key="index" type="success" size="small"
+                :bordered="false" style="cursor: pointer; padding: 4px 8px;" @click="applyRelatedIdea(idea)">
+                {{ idea }}
+              </n-tag>
+            </n-space>
+          </div>
+
+          <!-- 生成时间 -->
+          <div style="margin-top: 12px; text-align: right;">
+            <span style="font-size: 11px; color: #999;">生成于 {{ aiResult.generatedAt }}</span>
+          </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-else style="text-align: center; padding: 20px;">
+          <p style="color: #666; margin: 0 0 8px 0; font-size: 13px;">📝 写点内容后生成AI建议</p>
+          <p style="color: #999; margin: 0; font-size: 11px;">支持技术、设计、功能等关键词</p>
+        </div>
+      </div>
     </n-layout-sider>
   </n-layout>
 
@@ -428,6 +543,31 @@ onMounted(() => {
   background: white;
 }
 
+/* AI面板样式 */
+.ai-results {
+  padding: 4px;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestion-item {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #438266;
+}
+
+.suggestion-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 8px;
+}
+
 /* 暗色主题适配 */
 [data-theme="dark"] .idea-item {
   border-color: #424242;
@@ -476,6 +616,15 @@ onMounted(() => {
 
 [data-theme="dark"] .idea-meta {
   color: #999;
+}
+
+[data-theme="dark"] .suggestion-item {
+  background: #2d2d2d;
+  border-left-color: #438266;
+}
+
+[data-theme="dark"] .suggestion-text {
+  color: #ccc;
 }
 
 /* 响应式设计 */
