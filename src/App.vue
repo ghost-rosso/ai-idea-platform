@@ -17,6 +17,9 @@ const themeStore = useThemeStore()
           <span v-if="userStore.role !== 'guest'">
             欢迎, {{ userStore.username }} ({{ userStore.role }})
           </span>
+          <n-button v-if="userStore.isAdmin" to="/admin" size="small" type="warning" style="margin-left: 8px;">
+            管理笔记
+          </n-button>
           <n-button v-if="userStore.role !== 'guest'" @click="userStore.logout" size="small" style="margin-left: 8px;">
             退出
           </n-button>
