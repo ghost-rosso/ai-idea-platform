@@ -98,15 +98,6 @@ const validateForm = () => {
         </div>
       </form>
 
-      <!-- 社交登录 -->
-      <div class="social-login">
-        <p>其他登录方式</p>
-        <div class="social-icons">
-          <div class="social-icon wechat"><i class="fab fa-weixin"></i></div>
-          <div class="social-icon qq"><i class="fab fa-qq"></i></div>
-          <div class="social-icon weibo"><i class="fab fa-weibo"></i></div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -219,47 +210,6 @@ const validateForm = () => {
   color: #438266;
   text-decoration: none;
   font-weight: 500;
-}
-
-.social-login {
-  margin-top: 30px;
-  text-align: center;
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.social-icon {
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 20px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.social-icon:hover {
-  transform: translateY(-2px);
-}
-
-.wechat {
-  background: #07c160;
-}
-
-.qq {
-  background: #12b7f5;
-}
-
-.weibo {
-  background: #e6162d;
 }
 
 @media (max-width: 480px) {
