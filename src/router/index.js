@@ -6,10 +6,6 @@ import Admin from '@/views/Admin.vue' // 导入管理员页面
 const routes = [
   {
     path: '/',
-    component: Auth  // 直接让根路径显示Admin页面
-  },
-  {
-    path: '/home',
     component: Home
     // 移除 requiresAuth，因为我们现在有更简单的处理方式
   },

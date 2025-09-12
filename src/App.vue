@@ -14,18 +14,27 @@ const themeStore = useThemeStore()
       <n-space justify="space-between" align="center" style="padding: 12px 24px; height: 100%;">
         <n-h2 style="margin: 0;">AI灵感笔记平台</n-h2>
         <div>
-          <span v-if="userStore.role !== 'guest'">
-            欢迎, {{ userStore.username }} ({{ userStore.role }})
+          <!-- 显示用户名 -->
+          <span v-if="userStore.username">
+            欢迎, {{ userStore.username }}
           </span>
+
+          <!-- 管理员按钮 -->
           <n-button v-if="userStore.isAdmin" to="/admin" size="small" type="warning" style="margin-left: 8px;">
-            管理笔记
+            管理后台
           </n-button>
-          <n-button v-if="userStore.role !== 'guest'" @click="userStore.logout" size="small" style="margin-left: 8px;">
+
+          <!-- 退出按钮（已登录时显示） -->
+          <n-button v-if="userStore.username" @click="userStore.logout" size="small" style="margin-left: 8px;">
             退出
           </n-button>
+
+          <!-- 登录/注册按钮（未登录时显示） -->
           <n-button v-else to="/login" size="small" style="margin-left: 8px;">
             登录/注册
           </n-button>
+
+          <!-- 主题切换按钮 -->
           <n-button @click="themeStore.toggleTheme" size="small" style="margin-left: 8px;">
             {{ themeStore.isDark ? '☀️ 亮色' : '🌙 暗色' }}
           </n-button>
@@ -33,7 +42,7 @@ const themeStore = useThemeStore()
       </n-space>
     </n-layout-header>
 
-    <!-- 主要内容区域 (路由页面在这里渲染) -->
+    <!-- 主要内容区域 -->
     <n-layout-content style="height: calc(100vh - 64px);">
       <router-view />
     </n-layout-content>
@@ -41,7 +50,6 @@ const themeStore = useThemeStore()
 </template>
 
 <style scoped>
-/* 确保布局正确 */
 .n-layout {
   height: 100vh;
 }

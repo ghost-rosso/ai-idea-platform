@@ -5,55 +5,74 @@ import { useRouter } from 'vue-router'
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
   const token = ref(localStorage.getItem('token'))
-  const userInfo = ref(JSON.parse(localStorage.getItem('userInfo') || 'null'))
+  const username = ref(localStorage.getItem('username') || '')
+  
+  // 超级简化的管理员判断：用户名为admin就是管理员
+  const isAdmin = ref(username.value === 'admin')
 
-  // 计算属性：是否是管理员（超级简化版）
-  const isAdmin = ref(userInfo.value?.username === 'admin')
+  // 模拟用户数据库（存储在内存中）
+  const mockUsers = ref([
+    { username: 'admin', password: 'admin123' },
+    { username: 'test', password: 'test123' }
+  ])
 
-  // 模拟登录API - 简化版
+  // 模拟登录API
   const mockLogin = (data) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        // 只有admin用户是管理员，其他都是普通用户
-        if (data.username === 'admin' && data.password === 'admin123') {
-          const res = {
-            token: 'mock_token_admin',
-            user: {
-              username: 'admin',
-              role: 'admin'
-            }
-          }
-          resolve(res)
-        } 
-        // 普通用户登录
-        else if (data.username && data.password) {
-          const res = {
-            token: 'mock_token_user_' + Math.random().toString(36).substr(2, 6),
-            user: {
-              username: data.username,
-              role: 'user'
-            }
-          }
-          resolve(res)
+        const user = mockUsers.value.find(u => 
+          u.username === data.username && u.password === data.password
+        )
+        
+        if (user) {
+          resolve({
+            token: 'mock_token_' + Math.random().toString(36).substr(2, 16),
+            username: user.username
+          })
         } else {
           reject(new Error('用户名或密码错误'))
         }
-      }, 500) // 更短的延迟
+      }, 500)
     })
   }
 
-  // 模拟注册API - 简化版
+  // 模拟注册API
   const mockRegister = (data) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (data.username && data.password) {
-          resolve({ 
-            success: true,
-            message: '注册成功'
-          })
-        } else {
-          reject(new Error('注册信息不完整'))
+        // 检查用户名是否已存在
+        const userExists = mockUsers.value.some(u => u.username === data.username)
+        
+        if (userExists) {
+          reject(new Error('用户名已存在'))
+          return
         }
+        
+        if (!data.username || !data.password) {
+          reject(new Error('用户名和密码不能为空'))
+          return
+        }
+        
+        if (data.username.length < 3) {
+          reject(new Error('用户名至少3个字符'))
+          return
+        }
+        
+        if (data.password.length < 6) {
+          reject(new Error('密码至少6个字符'))
+          return
+        }
+        
+        // 添加到模拟数据库
+        mockUsers.value.push({
+          username: data.username,
+          password: data.password
+        })
+        
+        resolve({ 
+          success: true,
+          message: '注册成功'
+        })
       }, 500)
     })
   }
@@ -63,11 +82,11 @@ export const useUserStore = defineStore('user', () => {
     try {
       const res = await mockLogin(data)
       token.value = res.token
-      userInfo.value = res.user
-      isAdmin.value = res.user.username === 'admin' // 更新管理员状态
+      username.value = res.username
+      isAdmin.value = res.username === 'admin'
       
       localStorage.setItem('token', res.token)
-      localStorage.setItem('userInfo', JSON.stringify(res.user))
+      localStorage.setItem('username', res.username)
       
       return res
     } catch (error) {
@@ -89,17 +108,17 @@ export const useUserStore = defineStore('user', () => {
   // 退出登录
   const logout = () => {
     token.value = null
-    userInfo.value = null
+    username.value = ''
     isAdmin.value = false
     localStorage.removeItem('token')
-    localStorage.removeItem('userInfo')
+    localStorage.removeItem('username')
     router.push('/login')
   }
 
   return { 
     token,
-    userInfo,
-    isAdmin, // 导出isAdmin
+    username,
+    isAdmin,
     login,
     register,
     logout
