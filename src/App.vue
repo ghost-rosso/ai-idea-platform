@@ -2,9 +2,21 @@
 import { NLayout, NLayoutHeader, NSpace, NButton, NH2 } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
+import { useRouter } from 'vue-router' // 导入useRouter
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
+const router = useRouter() // 获取路由实例
+
+// 跳转到登录页
+const goToLogin = () => {
+  router.push('/login')
+}
+
+// 跳转到管理页
+const goToAdmin = () => {
+  router.push('/admin')
+}
 </script>
 
 <template>
@@ -20,7 +32,7 @@ const themeStore = useThemeStore()
           </span>
 
           <!-- 管理员按钮 -->
-          <n-button v-if="userStore.isAdmin" to="/admin" size="small" type="warning" style="margin-left: 8px;">
+          <n-button v-if="userStore.isAdmin" @click="goToAdmin" size="small" type="warning" style="margin-left: 8px;">
             管理后台
           </n-button>
 
@@ -30,7 +42,7 @@ const themeStore = useThemeStore()
           </n-button>
 
           <!-- 登录/注册按钮（未登录时显示） -->
-          <n-button v-else to="/login" size="small" style="margin-left: 8px;">
+          <n-button v-else @click="goToLogin" size="small" style="margin-left: 8px;">
             登录/注册
           </n-button>
 
