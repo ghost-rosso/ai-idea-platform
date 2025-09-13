@@ -1,20 +1,26 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useNoteStore } from '@/stores/noteStore'
 
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
+  const noteStore = useNoteStore()
+  
   const token = ref(localStorage.getItem('token'))
   const username = ref(localStorage.getItem('username') || '')
-  
-  // 超级简化的管理员判断：用户名为admin就是管理员
   const isAdmin = ref(username.value === 'admin')
 
-  // 模拟用户数据库（存储在内存中）
-  const mockUsers = ref([
+  // 从localStorage加载用户数据库，如果没有就初始化
+  const mockUsers = ref(JSON.parse(localStorage.getItem('mockUsers')) || [
     { username: 'admin', password: 'admin123' },
     { username: 'test', password: 'test123' }
   ])
+
+  // 保存用户数据库到localStorage
+  const saveUsersToLocalStorage = () => {
+    localStorage.setItem('mockUsers', JSON.stringify(mockUsers.value))
+  }
 
   // 模拟登录API
   const mockLogin = (data) => {
@@ -40,7 +46,6 @@ export const useUserStore = defineStore('user', () => {
   const mockRegister = (data) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        // 检查用户名是否已存在
         const userExists = mockUsers.value.some(u => u.username === data.username)
         
         if (userExists) {
@@ -63,11 +68,14 @@ export const useUserStore = defineStore('user', () => {
           return
         }
         
-        // 添加到模拟数据库
+        // 添加到用户数据库
         mockUsers.value.push({
           username: data.username,
           password: data.password
         })
+        
+        // 保存到localStorage
+        saveUsersToLocalStorage()
         
         resolve({ 
           success: true,
@@ -107,6 +115,8 @@ export const useUserStore = defineStore('user', () => {
 
   // 退出登录
   const logout = () => {
+    noteStore.clearCurrentUserData()
+    
     token.value = null
     username.value = ''
     isAdmin.value = false
