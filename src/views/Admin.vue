@@ -1,10 +1,17 @@
 <script setup>
 import { ref, computed, h } from 'vue'
 import { useNoteStore } from '@/stores/noteStore'
+import { useRouter } from 'vue-router' // 导入useRouter
 import { NDataTable, NButton, NH2, NTag, NSpace, NInput, NStatistic, NGrid, NGi, NCard } from 'naive-ui'
 
 const noteStore = useNoteStore()
+const router = useRouter() // 获取路由实例
 const searchKeyword = ref('')
+
+// 返回首页
+const goBackToHome = () => {
+  router.push('/')
+}
 
 // 笔记列定义
 const noteColumns = [
@@ -53,7 +60,7 @@ const noteColumns = [
         {
           size: 'small',
           type: 'error',
-          style: 'background: rgba(139, 119, 101, 0.1); color: #8b7765; border-color: #d4c5a8;',
+          style: 'background: rgba(220, 148, 226, 0.515) ; color: #8b7765; border-color: #d4c5a8;',
           onClick: () => noteStore.deleteNote(row.id)
         },
         () => '删除'
@@ -83,8 +90,16 @@ const stats = computed(() => ({
 
 <template>
   <div class="admin-container">
-    <!-- 标题 -->
-    <n-h2 class="page-title">📊 笔记管理控制台</n-h2>
+    <!-- 标题和返回按钮 -->
+    <div class="header-section">
+      <n-button @click="goBackToHome" size="small" class="back-btn">
+        <template #icon>
+          <span>←</span>
+        </template>
+        返回首页
+      </n-button>
+      <n-h2 class="page-title">笔记管理控制台</n-h2>
+    </div>
 
     <!-- 统计卡片 -->
     <n-grid :cols="3" :x-gap="16" :y-gap="16" style="margin-bottom: 28px;">
@@ -137,13 +152,6 @@ const stats = computed(() => ({
           </template>
           导出所有笔记
         </n-button>
-
-        <n-button style="margin-left: 12px;" @click="$message.info('备份功能开发中')" class="action-btn secondary">
-          <template #icon>
-            <span>💾</span>
-          </template>
-          备份数据
-        </n-button>
       </div>
     </n-card>
   </div>
@@ -158,14 +166,39 @@ const stats = computed(() => ({
   min-height: 100vh;
 }
 
+/* 头部区域 */
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.back-btn {
+  background: rgba(211, 182, 237, 0.988) !important;
+  border: none !important;
+  color: #fcfbfb !important;
+  font-weight: 500;
+  position: absolute;
+  left: 0;
+  z-index: 1;
+}
+
+.back-btn:hover {
+  transform: translateX(-2px);
+  box-shadow: 0 2px 8px rgba(139, 119, 101, 0.2);
+}
+
 .page-title {
   text-align: center;
-  margin-bottom: 32px;
+  margin: 0 auto !important;
   background: linear-gradient(135deg, #8b7765 0%, #6d5d4f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 600;
+  flex: 1;
 }
 
 /* 统计卡片 */
@@ -217,16 +250,11 @@ const stats = computed(() => ({
 
 /* 操作按钮 */
 .action-btn {
-  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  background: linear-gradient(135deg, #a2dae4 0%, #87abe9 100%) !important;
   border: none !important;
   border-radius: 8px !important;
   color: white !important;
   font-weight: 500;
-}
-
-.action-btn.secondary {
-  background: linear-gradient(135deg, #d4c5a8 0%, #b8a98c 100%) !important;
-  color: #6d5d4f !important;
 }
 
 .action-btn:hover {
@@ -260,10 +288,26 @@ const stats = computed(() => ({
   border-color: #443c31 !important;
 }
 
+[data-theme="dark"] .back-btn {
+  background: linear-gradient(135deg, #5a5043 0%, #443c31 100%) !important;
+  color: #d4c5a8 !important;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .admin-container {
     padding: 16px;
+  }
+
+  .header-section {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .back-btn {
+    position: relative;
+    align-self: flex-start;
   }
 
   .card-header {
@@ -278,6 +322,16 @@ const stats = computed(() => ({
 
   .n-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-section {
+    gap: 8px;
+  }
+
+  .page-title {
+    font-size: 20px;
   }
 }
 </style>

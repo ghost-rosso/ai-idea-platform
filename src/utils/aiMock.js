@@ -138,16 +138,28 @@ export const generateRelatedIdeas = (count = 2) => {
     .slice(0, count)
 }
 
-// 模拟AI思考过程
+// 或者简化版本
 export const simulateAIThinking = (content) => {
-  const keywords = extractKeywords(content)
-  const suggestions = generateAISuggestions(keywords, 3)
-  const related = generateRelatedIdeas(2)
+  // 直接从所有建议中随机选择
+  const allSuggestions = [
+    ...suggestionLibrary.technical,
+    ...suggestionLibrary.design,
+    ...suggestionLibrary.feature,
+    ...suggestionLibrary.business,
+    ...suggestionLibrary.innovation
+  ]
+  
+  const randomSuggestions = [...allSuggestions]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3)
+  
+  const randomRelated = [...relatedIdeas]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 2)
   
   return {
-    suggestions,
-    related,
-    keywords,
+    suggestions: randomSuggestions,
+    related: randomRelated,
     generatedAt: new Date().toLocaleTimeString()
   }
 }

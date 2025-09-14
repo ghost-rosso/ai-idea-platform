@@ -8,15 +8,8 @@ const userStore = useUserStore()
 const themeStore = useThemeStore()
 const router = useRouter()
 
-// 跳转到登录页
-const goToLogin = () => {
-  router.push('/login')
-}
-
-// 跳转到管理页
-const goToAdmin = () => {
-  router.push('/admin')
-}
+const goToLogin = () => router.push('/login')
+const goToAdmin = () => router.push('/admin')
 </script>
 
 <template>
@@ -24,46 +17,36 @@ const goToAdmin = () => {
     <!-- 顶部导航栏 - 浅米色主题 -->
     <n-layout-header class="header">
       <n-space justify="space-between" align="center" class="header-content">
-        <!-- 左侧Logo和标题 -->
+        <!-- 左侧 Logo 和标题 -->
         <n-space align="center" :size="16">
           <div class="logo">
-            <span class="logo-icon">📝</span>
+            <!-- 旧 emoji 已替换为 PNG -->
+            <img src="/logo.png" alt="logo" class="logo-img" />
           </div>
           <n-h2 class="title">AI灵感笔记</n-h2>
         </n-space>
 
         <!-- 右侧操作区 -->
         <n-space align="center" :size="8">
-          <!-- 欢迎信息 -->
           <span v-if="userStore.username" class="welcome-text">
             欢迎, {{ userStore.username }}
           </span>
 
-          <!-- 管理员按钮 -->
           <n-button v-if="userStore.isAdmin" @click="goToAdmin" size="small" class="admin-btn">
-            <template #icon>
-              <span>⚙️</span>
-            </template>
+            <template #icon><span>⚙️</span></template>
             管理后台
           </n-button>
 
-          <!-- 退出按钮 -->
           <n-button v-if="userStore.username" @click="userStore.logout" size="small" class="logout-btn">
-            <template #icon>
-              <span>🚪</span>
-            </template>
+            <template #icon><span>🚪</span></template>
             退出
           </n-button>
 
-          <!-- 登录/注册按钮 -->
           <n-button v-else @click="goToLogin" size="small" class="login-btn">
-            <template #icon>
-              <span>🔐</span>
-            </template>
+            <template #icon><span>🔐</span></template>
             登录/注册
           </n-button>
 
-          <!-- 主题切换按钮 -->
           <n-button @click="themeStore.toggleTheme" size="small" class="theme-btn" circle>
             <template #icon>
               <span>{{ themeStore.isDark ? '☀️' : '🌙' }}</span>
@@ -81,22 +64,21 @@ const goToAdmin = () => {
 </template>
 
 <style scoped>
-/* 导航栏容器 */
+/* ========= 导航栏容器 ========= */
 .header {
   height: 70px;
-  background: linear-gradient(135deg, #dbceaa 0%, #dfc8a1 100%);
+  background: linear-gradient(135deg, #e8dfc4 0%, #f9ecd7 100%);
   border-bottom: 1px solid #e8dfce;
   box-shadow: 0 2px 12px rgba(139, 119, 101, 0.08);
   backdrop-filter: blur(10px);
 }
 
-/* 导航栏内容 */
 .header-content {
   padding: 0 28px;
   height: 100%;
 }
 
-/* Logo样式 */
+/* ========= Logo 区域 ========= */
 .logo {
   width: 40px;
   height: 40px;
@@ -108,12 +90,15 @@ const goToAdmin = () => {
   box-shadow: 0 2px 8px rgba(139, 119, 101, 0.15);
 }
 
-.logo-icon {
-  font-size: 20px;
+.logo-img {
+  width: 24px;
+  /* 按需调整 */
+  height: 24px;
+  object-fit: contain;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
-/* 标题样式 */
+/* ========= 标题 ========= */
 .title {
   margin: 0;
   font-size: 22px;
@@ -126,7 +111,7 @@ const goToAdmin = () => {
   text-shadow: 0 1px 2px rgba(200, 100, 12, 0.1);
 }
 
-/* 欢迎文本 */
+/* ========= 欢迎文本 ========= */
 .welcome-text {
   color: #8b7765;
   font-size: 16px;
@@ -137,16 +122,15 @@ const goToAdmin = () => {
   -webkit-text-stroke: 0.5px #aa9179;
 }
 
-/* 按钮统一样式 */
+/* ========= 按钮统一样式 ========= */
 :deep(.n-button) {
   font-weight: 500;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
 
-/* 管理员按钮 */
 .admin-btn {
-  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  background: linear-gradient(135deg, #a2dae4 0%, #87abe9 100%) !important;
   border: none;
   color: white !important;
 }
@@ -156,7 +140,6 @@ const goToAdmin = () => {
   box-shadow: 0 4px 12px rgba(139, 119, 101, 0.2);
 }
 
-/* 登录按钮 */
 .login-btn {
   background: linear-gradient(135deg, #d4c5a8 0%, #b8a98c 100%) !important;
   border: none;
@@ -168,21 +151,19 @@ const goToAdmin = () => {
   box-shadow: 0 4px 12px rgba(139, 119, 101, 0.15);
 }
 
-/* 退出按钮 */
 .logout-btn {
-  background: rgba(139, 119, 101, 0.1) !important;
+  background: rgba(220, 148, 226, 0.515) !important;
   border: 1px solid #d4c5a8;
-  color: #8b7765 !important;
+  color: #ffffff !important;
 }
 
 .logout-btn:hover {
-  background: rgba(139, 119, 101, 0.15) !important;
-  border-color: #b8a98c;
+  background: rgba(207, 133, 212, 0.636) !important;
+  border-color: #ca7cdc;
 }
 
-/* 主题切换按钮 */
 .theme-btn {
-  background: rgba(139, 119, 101, 0.08) !important;
+  background: rgba(211, 182, 237, 0.988) !important;
   border: 1px solid rgba(139, 119, 101, 0.2);
   color: #8b7765 !important;
   width: 36px;
@@ -194,7 +175,7 @@ const goToAdmin = () => {
   border-color: rgba(139, 119, 101, 0.3);
 }
 
-/* 暗色主题适配 */
+/* ========= 暗色主题适配 ========= */
 [data-theme="dark"] .header {
   background: linear-gradient(135deg, #3a3229 0%, #2a241d 100%);
   border-bottom-color: #443c31;
@@ -212,7 +193,7 @@ const goToAdmin = () => {
   border-right-color: #5a5043;
 }
 
-/* 响应式设计 */
+/* ========= 响应式 ========= */
 @media (max-width: 768px) {
   .header-content {
     padding: 0 16px;
@@ -223,7 +204,7 @@ const goToAdmin = () => {
   }
 
   .welcome-text {
-    display: none;
+    font-size: 15px;
   }
 
   :deep(.n-button__content) {

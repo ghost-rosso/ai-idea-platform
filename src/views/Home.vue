@@ -364,7 +364,8 @@ onMounted(() => {
           {{ isLoadingAI ? '思考中...' : '生成灵感建议' }}
         </n-button>
 
-        <n-button v-if="aiResult" size="small" block @click="clearAIResults" class="ai-clear-btn">
+        <n-button v-if="aiResult" size="small" block @click="clearAIResults" class="ai-clear-btn"
+          style="margin-top: 12px;">
           清空结果
         </n-button>
       </div>
@@ -379,17 +380,6 @@ onMounted(() => {
 
         <!-- AI建议结果 -->
         <div v-else-if="aiResult" class="ai-results">
-          <!-- 检测到的关键词 -->
-          <div v-if="aiResult.keywords.length" class="keywords-section">
-            <n-h4 class="section-title">检测到关键词</n-h4>
-            <n-space class="keywords-container">
-              <n-tag v-for="keyword in aiResult.keywords" :key="keyword" size="small" type="info" :bordered="false"
-                class="keyword-tag">
-                {{ keyword }}
-              </n-tag>
-            </n-space>
-          </div>
-
           <!-- AI建议 -->
           <div class="suggestions-section">
             <n-h4 class="section-title">AI建议</n-h4>
@@ -483,13 +473,13 @@ onMounted(() => {
 }
 
 .create-btn {
-  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  background: linear-gradient(135deg, #ade2e4 0%, #a9cdf7 100%) !important;
   border: none !important;
   color: white !important;
 }
 
 .delete-btn {
-  background: rgba(139, 119, 101, 0.1) !important;
+  background: rgba(220, 148, 226, 0.515) !important;
   border: 1px solid #d4c5a8 !important;
   color: #8b7765 !important;
 }
@@ -637,7 +627,7 @@ onMounted(() => {
 }
 
 .add-tag-btn {
-  background: rgba(139, 119, 101, 0.1) !important;
+  background: rgba(211, 182, 237, 0.988) !important;
   border: 1px solid #d4c5a8 !important;
   color: #8b7765 !important;
 }
@@ -708,15 +698,15 @@ onMounted(() => {
 }
 
 .ai-generate-btn {
-  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  background: linear-gradient(135deg, #ade2e4 0%, #a9cdf7 100%) !important;
   border: none !important;
   color: white !important;
 }
 
 .ai-clear-btn {
-  background: rgba(139, 119, 101, 0.1) !important;
+  background: rgba(220, 148, 226, 0.515) !important;
   border: 1px solid #d4c5a8 !important;
-  color: #8b7765 !important;
+  color: #ffffff !important;
 }
 
 .ai-content {
