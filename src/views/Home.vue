@@ -260,27 +260,38 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-layout has-sider style="height: 100%;">
+  <n-layout has-sider class="main-layout">
     <!-- 左侧导航栏 -->
-    <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="280" show-trigger
-      content-style="padding: 16px; display: flex; flex-direction: column;">
+    <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="300" show-trigger class="sidebar">
       <!-- 搜索和操作区 -->
-      <div style="margin-bottom: 16px;">
-        <n-input v-model:value="searchKeyword" placeholder="搜索笔记..." clearable style="margin-bottom: 12px;" />
-        <n-space>
-          <n-button type="primary" size="small" @click="handleCreateNote">
-            + 新建
+      <div class="sidebar-header">
+        <n-input v-model:value="searchKeyword" placeholder="搜索笔记..." clearable class="search-input">
+          <template #prefix>
+            <span class="search-icon">🔍</span>
+          </template>
+        </n-input>
+        <n-space class="action-buttons">
+          <n-button type="primary" size="small" @click="handleCreateNote" class="create-btn">
+            <template #icon>
+              <span>➕</span>
+            </template>
+            新建
           </n-button>
-          <n-button type="error" size="small" @click="handleDeleteNote" :disabled="!noteStore.currentNote">
-            - 删除
+          <n-button type="error" size="small" @click="handleDeleteNote" :disabled="!noteStore.currentNote"
+            class="delete-btn">
+            <template #icon>
+              <span>🗑️</span>
+            </template>
+            删除
           </n-button>
         </n-space>
       </div>
 
       <!-- 笔记列表 -->
-      <div style="flex: 1; overflow-y: auto;">
-        <n-h3 style="margin-top: 0; margin-bottom: 12px; font-size: 16px;">我的笔记</n-h3>
-        <n-empty v-if="filteredNotes.length === 0" :description="searchKeyword ? '未找到相关笔记' : '暂无笔记'" />
+      <div class="notes-container">
+        <n-h3 class="notes-title">我的笔记</n-h3>
+        <n-empty v-if="filteredNotes.length === 0" :description="searchKeyword ? '未找到相关笔记' : '暂无笔记'"
+          class="empty-state" />
         <div v-else class="idea-list">
           <div v-for="note in filteredNotes" :key="note.id"
             :class="['idea-item', { active: noteStore.currentNoteId === note.id }]"
@@ -299,26 +310,26 @@ onMounted(() => {
     </n-layout-sider>
 
     <!-- 中央编辑器 -->
-    <n-layout-content content-style="padding: 16px; display: flex; flex-direction: column;">
-      <n-empty v-if="!noteStore.currentNote" description="请选择或创建笔记" />
+    <n-layout-content class="editor-content">
+      <n-empty v-if="!noteStore.currentNote" description="请选择或创建笔记" class="empty-editor" />
       <template v-else>
         <!-- 标题编辑区 -->
-        <div style="margin-bottom: 16px;">
+        <div class="editor-header">
           <input :value="noteStore.currentNote.title" @input="updateTitle($event.target.value)" placeholder="笔记标题"
             class="title-input" />
         </div>
 
         <!-- 标签编辑区 -->
-        <div style="margin-bottom: 16px;">
-          <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+        <div class="tags-section">
+          <div class="tags-container">
             <span v-for="tag in noteStore.currentNote.tags" :key="tag" class="tag editable" @click="removeTag(tag)">
               {{ tag }} ×
             </span>
           </div>
-          <n-space>
-            <n-input v-model:value="newTag" placeholder="添加标签" size="small" style="width: 120px;"
+          <n-space class="tag-input-container">
+            <n-input v-model:value="newTag" placeholder="添加标签" size="small" class="tag-input"
               @keypress.enter="addTag(newTag)" />
-            <n-button size="small" @click="addTag(newTag)">添加</n-button>
+            <n-button size="small" @click="addTag(newTag)" class="add-tag-btn">添加</n-button>
           </n-space>
         </div>
 
@@ -327,62 +338,65 @@ onMounted(() => {
           placeholder="开始书写你的灵感..." class="content-textarea"></textarea>
 
         <!-- 更新时间显示 -->
-        <div style="margin-top: 12px; color: #666; font-size: 12px;">
+        <div class="update-time">
           最后更新: {{ new Date(noteStore.currentNote.updatedAt).toLocaleString() }}
         </div>
       </template>
 
       <!-- 灵感图谱区域 -->
-      <n-divider />
+      <n-divider class="divider" />
       <div class="graph-container">
-        <div id="idea-graph" style="width: 100%; height: 300px;"></div>
+        <div id="idea-graph" class="graph-chart"></div>
       </div>
     </n-layout-content>
 
     <!-- 右侧AI面板 -->
-    <n-layout-sider bordered collapse-mode="width" :collapsed-width="20" :width="320" show-trigger
-      content-style="padding: 16px; display: flex; flex-direction: column;" position="right">
-
+    <n-layout-sider bordered collapse-mode="width" :collapsed-width="20" :width="340" show-trigger position="right"
+      class="ai-sidebar">
       <!-- AI面板头部 -->
-      <div style="margin-bottom: 16px;">
-        <n-h3 style="margin-top: 0; margin-bottom: 12px;">🤖 AI灵感助手</n-h3>
+      <div class="ai-header">
+        <n-h3 class="ai-title">🤖 AI灵感助手</n-h3>
         <n-button type="primary" block @click="generateAISuggestions" :loading="isLoadingAI"
-          :disabled="!noteStore.currentNote?.content?.trim()" size="small">
-          {{ isLoadingAI ? '思考中...' : '💡 生成灵感建议' }}
+          :disabled="!noteStore.currentNote?.content?.trim()" size="small" class="ai-generate-btn">
+          <template #icon>
+            <span>💡</span>
+          </template>
+          {{ isLoadingAI ? '思考中...' : '生成灵感建议' }}
         </n-button>
 
-        <n-button v-if="aiResult" size="small" block @click="clearAIResults" style="margin-top: 8px;">
+        <n-button v-if="aiResult" size="small" block @click="clearAIResults" class="ai-clear-btn">
           清空结果
         </n-button>
       </div>
 
       <!-- AI内容区域 -->
-      <div style="flex: 1; overflow-y: auto;">
+      <div class="ai-content">
         <!-- 加载状态 -->
-        <div v-if="isLoadingAI" style="text-align: center; padding: 20px;">
+        <div v-if="isLoadingAI" class="ai-loading">
           <n-spin size="small" />
-          <p style="margin: 8px 0 0 0; color: #666; font-size: 12px;">AI正在分析笔记内容...</p>
+          <p>AI正在分析笔记内容...</p>
         </div>
 
         <!-- AI建议结果 -->
         <div v-else-if="aiResult" class="ai-results">
           <!-- 检测到的关键词 -->
-          <div v-if="aiResult.keywords.length" style="margin-bottom: 16px;">
-            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">检测到关键词</n-h4>
-            <n-space>
-              <n-tag v-for="keyword in aiResult.keywords" :key="keyword" size="small" type="info" :bordered="false">
+          <div v-if="aiResult.keywords.length" class="keywords-section">
+            <n-h4 class="section-title">检测到关键词</n-h4>
+            <n-space class="keywords-container">
+              <n-tag v-for="keyword in aiResult.keywords" :key="keyword" size="small" type="info" :bordered="false"
+                class="keyword-tag">
                 {{ keyword }}
               </n-tag>
             </n-space>
           </div>
 
           <!-- AI建议 -->
-          <div style="margin-bottom: 16px;">
-            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">AI建议</n-h4>
+          <div class="suggestions-section">
+            <n-h4 class="section-title">AI建议</n-h4>
             <div class="suggestion-list">
               <div v-for="(suggestion, index) in aiResult.suggestions" :key="index" class="suggestion-item">
                 <div class="suggestion-text">{{ suggestion }}</div>
-                <n-button size="tiny" @click="applySuggestion(suggestion)" style="margin-top: 4px;">
+                <n-button size="tiny" @click="applySuggestion(suggestion)" class="apply-btn">
                   应用到笔记
                 </n-button>
               </div>
@@ -390,49 +404,114 @@ onMounted(() => {
           </div>
 
           <!-- 相关灵感 -->
-          <div v-if="aiResult.related.length">
-            <n-h4 style="margin: 0 0 8px 0; font-size: 13px; color: #438266;">相关灵感</n-h4>
-            <n-space vertical :size="6">
+          <div v-if="aiResult.related.length" class="related-section">
+            <n-h4 class="section-title">相关灵感</n-h4>
+            <n-space vertical :size="6" class="related-container">
               <n-tag v-for="(idea, index) in aiResult.related" :key="index" type="success" size="small"
-                :bordered="false" style="cursor: pointer; padding: 4px 8px;" @click="applyRelatedIdea(idea)">
+                :bordered="false" class="related-tag" @click="applyRelatedIdea(idea)">
                 {{ idea }}
               </n-tag>
             </n-space>
           </div>
 
           <!-- 生成时间 -->
-          <div style="margin-top: 12px; text-align: right;">
-            <span style="font-size: 11px; color: #999;">生成于 {{ aiResult.generatedAt }}</span>
+          <div class="generation-time">
+            生成于 {{ aiResult.generatedAt }}
           </div>
         </div>
 
         <!-- 空状态 -->
-        <div v-else style="text-align: center; padding: 20px;">
-          <p style="color: #666; margin: 0 0 8px 0; font-size: 13px;">📝 写点内容后生成AI建议</p>
-          <p style="color: #999; margin: 0; font-size: 11px;">支持技术、设计、功能等关键词</p>
+        <div v-else class="ai-empty">
+          <p class="empty-text">📝 写点内容后生成AI建议</p>
+          <p class="empty-subtext">支持技术、设计、功能等关键词</p>
         </div>
       </div>
     </n-layout-sider>
   </n-layout>
 
   <!-- 删除确认模态框 -->
-  <n-modal v-model:show="showDeleteModal" preset="dialog" title="确认删除">
+  <n-modal v-model:show="showDeleteModal" preset="dialog" title="确认删除" class="delete-modal">
     <template #header>
-      <div>确认删除</div>
+      <div class="modal-title">确认删除</div>
     </template>
-    <div style="padding: 20px;">
+    <div class="modal-content">
       确定要删除"{{ noteStore.currentNote?.title || '未命名笔记' }}"吗？此操作不可恢复。
     </div>
     <template #action>
       <n-space>
-        <n-button @click="showDeleteModal = false">取消</n-button>
-        <n-button type="error" @click="confirmDelete">确认删除</n-button>
+        <n-button @click="showDeleteModal = false" class="modal-cancel-btn">取消</n-button>
+        <n-button type="error" @click="confirmDelete" class="modal-confirm-btn">确认删除</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <style scoped>
+/* 主布局 */
+.main-layout {
+  height: 100vh;
+  background: linear-gradient(135deg, #faf8f4 0%, #f5f1e9 100%);
+}
+
+/* 左侧边栏 */
+.sidebar {
+  background: linear-gradient(135deg, #f8f4e9 0%, #f1e8d8 100%) !important;
+  border-right: 1px solid #e8dfce !important;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid #e8dfce;
+}
+
+.search-input {
+  border: 1px solid #e8dfce !important;
+  border-radius: 8px !important;
+}
+
+.search-input:focus {
+  border-color: #8b7765 !important;
+  box-shadow: 0 0 0 2px rgba(139, 119, 101, 0.2) !important;
+}
+
+.search-icon {
+  color: #8b7765;
+}
+
+.action-buttons {
+  margin-top: 12px;
+}
+
+.create-btn {
+  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.delete-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8 !important;
+  color: #8b7765 !important;
+}
+
+/* 笔记列表 */
+.notes-container {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.notes-title {
+  color: #8b7765;
+  margin: 0 0 16px 0 !important;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.empty-state {
+  color: #8b7765;
+}
+
 .idea-list {
   display: flex;
   flex-direction: column;
@@ -440,35 +519,38 @@ onMounted(() => {
 }
 
 .idea-item {
-  padding: 12px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 12px;
   cursor: pointer;
-  border: 1px solid #e0e0e0;
-  transition: all 0.2s;
-  background: white;
+  border: 1px solid #e8dfce;
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .idea-item:hover {
-  background-color: #f8f9fa;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(139, 119, 101, 0.1);
+  border-color: #d4c5a8;
 }
 
 .idea-item.active {
-  background-color: #e3f2fd;
-  border-color: #2196f3;
-  font-weight: 500;
+  background: linear-gradient(135deg, #e8dfce 0%, #d4c5a8 100%) !important;
+  border-color: #8b7765;
+  box-shadow: 0 4px 16px rgba(139, 119, 101, 0.15);
 }
 
 .idea-title {
-  font-weight: 500;
-  margin-bottom: 4px;
+  font-weight: 600;
+  margin-bottom: 6px;
   word-break: break-word;
+  color: #6d5d4f;
 }
 
 .idea-meta {
   font-size: 12px;
-  color: #666;
+  color: #8b7765;
   margin: 4px 0;
 }
 
@@ -479,73 +561,193 @@ onMounted(() => {
 }
 
 .tag {
-  padding: 2px 6px;
-  background-color: #e0e0e0;
+  padding: 4px 8px;
+  background: rgba(139, 119, 101, 0.1);
   border-radius: 12px;
-  font-size: 12px;
-  color: #666;
+  font-size: 11px;
+  color: #8b7765;
+  border: 1px solid rgba(139, 119, 101, 0.2);
 }
 
 .tag.editable {
   cursor: pointer;
-  background-color: #e3f2fd;
-  border: 1px solid #bbdefb;
+  background: rgba(139, 119, 101, 0.15) !important;
 }
 
 .tag.editable:hover {
-  background-color: #bbdefb;
+  background: rgba(139, 119, 101, 0.25) !important;
 }
 
 .tag-more {
   font-size: 11px;
-  color: #999;
-  background: none;
-  border: none;
+  color: #8b7765;
+}
+
+/* 编辑器区域 */
+.editor-content {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-editor {
+  color: #8b7765;
+}
+
+.editor-header {
+  margin-bottom: 20px;
 }
 
 .title-input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
+  padding: 16px;
+  border: 1px solid #e8dfce;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: 600;
   outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6d5d4f;
 }
 
 .title-input:focus {
-  border-color: #438266;
-  box-shadow: 0 0 0 2px rgba(67, 130, 102, 0.2);
+  border-color: #8b7765;
+  box-shadow: 0 0 0 2px rgba(139, 119, 101, 0.2);
+}
+
+.tags-section {
+  margin-bottom: 20px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag-input-container {
+  align-items: center;
+}
+
+.tag-input {
+  border: 1px solid #e8dfce !important;
+  border-radius: 8px !important;
+}
+
+.add-tag-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8 !important;
+  color: #8b7765 !important;
 }
 
 .content-textarea {
   flex: 1;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e8dfce;
+  border-radius: 12px;
   resize: none;
   font-family: inherit;
   line-height: 1.6;
   min-height: 300px;
   outline: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6d5d4f;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content-textarea:focus {
-  border-color: #438266;
-  box-shadow: 0 0 0 2px rgba(67, 130, 102, 0.2);
+  border-color: #8b7765;
+  box-shadow: 0 0 0 2px rgba(139, 119, 101, 0.2);
+}
+
+.update-time {
+  margin-top: 12px;
+  color: #8b7765;
+  font-size: 12px;
+  text-align: right;
+}
+
+.divider {
+  margin: 24px 0;
+  border-color: #e8dfce !important;
 }
 
 .graph-container {
-  margin-top: 24px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 16px;
-  background: white;
+  border: 1px solid #e8dfce;
+  border-radius: 12px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(139, 119, 101, 0.08);
 }
 
-/* AI面板样式 */
-.ai-results {
-  padding: 4px;
+.graph-chart {
+  width: 100%;
+  height: 300px;
+}
+
+/* AI侧边栏 */
+.ai-sidebar {
+  background: linear-gradient(135deg, #f8f4e9 0%, #f1e8d8 100%) !important;
+  border-left: 1px solid #e8dfce !important;
+}
+
+.ai-header {
+  padding: 20px;
+  border-bottom: 1px solid #e8dfce;
+}
+
+.ai-title {
+  color: #8b7765;
+  margin: 0 0 16px 0 !important;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ai-generate-btn {
+  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.ai-clear-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8 !important;
+  color: #8b7765 !important;
+}
+
+.ai-content {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ai-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8b7765;
+}
+
+.keywords-section,
+.suggestions-section,
+.related-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  color: #8b7765;
+  margin: 0 0 12px 0 !important;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.keyword-tag {
+  background: rgba(139, 119, 101, 0.1) !important;
+  color: #8b7765 !important;
+  border: 1px solid #d4c5a8 !important;
 }
 
 .suggestion-list {
@@ -555,97 +757,165 @@ onMounted(() => {
 }
 
 .suggestion-item {
-  padding: 12px;
-  background: #f8f9fa;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 8px;
-  border-left: 3px solid #438266;
+  border-left: 4px solid #8b7765;
+  backdrop-filter: blur(10px);
 }
 
 .suggestion-text {
   font-size: 13px;
   line-height: 1.5;
-  color: #333;
+  color: #6d5d4f;
   margin-bottom: 8px;
 }
 
-/* 暗色主题适配 */
-[data-theme="dark"] .idea-item {
-  border-color: #424242;
-  background: #1e1e1e;
+.apply-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8 !important;
+  color: #8b7765 !important;
 }
 
-[data-theme="dark"] .idea-item:hover {
-  background-color: #2d2d2d;
+.related-tag {
+  background: rgba(139, 119, 101, 0.1) !important;
+  color: #8b7765 !important;
+  border: 1px solid #d4c5a8 !important;
+  cursor: pointer;
 }
 
-[data-theme="dark"] .idea-item.active {
-  background-color: #1e3a5f;
-  border-color: #1976d2;
+.related-tag:hover {
+  background: rgba(139, 119, 101, 0.2) !important;
 }
 
-[data-theme="dark"] .tag {
-  background-color: #424242;
-  color: #ccc;
+.generation-time {
+  text-align: right;
+  color: #8b7765;
+  font-size: 11px;
+  margin-top: 16px;
 }
 
-[data-theme="dark"] .tag.editable {
-  background-color: #1e3a5f;
-  border-color: #1976d2;
+.ai-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #8b7765;
 }
 
-[data-theme="dark"] .tag.editable:hover {
-  background-color: #1565c0;
+.empty-text {
+  margin: 0 0 8px 0;
+  font-size: 13px;
 }
 
-[data-theme="dark"] .title-input,
-[data-theme="dark"] .content-textarea {
-  background-color: #2d2d2d;
-  border-color: #424242;
-  color: white;
+.empty-subtext {
+  margin: 0;
+  font-size: 11px;
+  color: #8b7765;
 }
 
-[data-theme="dark"] .title-input:focus,
-[data-theme="dark"] .content-textarea:focus {
-  border-color: #438266;
+/* 模态框 */
+.delete-modal :deep(.n-card) {
+  background: linear-gradient(135deg, #f8f4e9 0%, #f1e8d8 100%) !important;
+  border: 1px solid #e8dfce !important;
 }
 
-[data-theme="dark"] .graph-container {
-  background-color: #1e1e1e;
-  border-color: #424242;
+.modal-title {
+  color: #8b7765;
+  font-weight: 600;
 }
 
-[data-theme="dark"] .idea-meta {
-  color: #999;
+.modal-content {
+  color: #6d5d4f;
+  padding: 20px;
 }
 
-[data-theme="dark"] .suggestion-item {
-  background: #2d2d2d;
-  border-left-color: #438266;
+.modal-cancel-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8 !important;
+  color: #8b7765 !important;
 }
 
-[data-theme="dark"] .suggestion-text {
-  color: #ccc;
+.modal-confirm-btn {
+  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  border: none !important;
+  color: white !important;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .graph-container {
-    margin-top: 16px;
-    padding: 12px;
-  }
-
-  #idea-graph {
-    height: 250px !important;
+  .editor-content {
+    padding: 16px;
   }
 
   .title-input {
-    font-size: 16px;
-    padding: 10px;
+    font-size: 18px;
+    padding: 12px;
   }
 
   .content-textarea {
     min-height: 200px;
-    padding: 12px;
+    padding: 16px;
   }
+
+  .graph-chart {
+    height: 250px;
+  }
+
+  .ai-sidebar {
+    width: 280px !important;
+  }
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .main-layout {
+  background: linear-gradient(135deg, #2a241d 0%, #3a3229 100%);
+}
+
+[data-theme="dark"] .editor-content {
+  background: rgba(42, 36, 29, 0.95);
+}
+
+[data-theme="dark"] .title-input,
+[data-theme="dark"] .content-textarea {
+  background: rgba(58, 50, 41, 0.9);
+  color: #d4c5a8;
+  border-color: #5a5043;
+}
+
+[data-theme="dark"] .graph-container {
+  background: rgba(58, 50, 41, 0.9);
+  border-color: #5a5043;
+}
+
+[data-theme="dark"] .idea-item {
+  background: rgba(58, 50, 41, 0.8);
+  border-color: #5a5043;
+  color: #d4c5a8;
+}
+
+[data-theme="dark"] .idea-item.active {
+  background: linear-gradient(135deg, #5a5043 0%, #443c31 100%) !important;
+}
+
+[data-theme="dark"] .idea-title {
+  color: #d4c5a8;
+}
+
+[data-theme="dark"] .idea-meta {
+  color: #b8a98c;
+}
+
+[data-theme="dark"] .tag {
+  background: rgba(139, 119, 101, 0.2);
+  color: #b8a98c;
+  border-color: #5a5043;
+}
+
+[data-theme="dark"] .update-time {
+  color: #b8a98c;
+}
+
+[data-theme="dark"] .suggestion-item {
+  background: rgba(58, 50, 41, 0.8);
+  color: #d4c5a8;
 }
 </style>

@@ -214,19 +214,21 @@ const switchForm = (toLogin) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.1);
   z-index: 0;
 }
 
 .container {
   position: relative;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.418);
   padding: 40px 50px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 450px;
+  box-sizing: border-box;
+  /* 添加这个 */
 }
 
 .logo {
@@ -245,13 +247,13 @@ const switchForm = (toLogin) => {
   margin-top: 15px;
   font-size: 24px;
   font-weight: 600;
-  color: #438266;
+  color: #7c6b9b;
   letter-spacing: 1px;
   transition: color 0.3s ease;
 }
 
 .logo:hover .logo-text {
-  color: #25723b;
+  color: #4d317f;
 }
 
 .message {
@@ -277,6 +279,8 @@ const switchForm = (toLogin) => {
 
 .form-group {
   margin-bottom: 20px;
+  width: 100%;
+  /* 确保表单组占满宽度 */
 }
 
 .form-control {
@@ -286,12 +290,14 @@ const switchForm = (toLogin) => {
   border: 2px solid #e0e0e0;
   border-radius: 10px;
   transition: 0.3s;
+  box-sizing: border-box;
+  /* 关键修复：包含padding和border在宽度内 */
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #438266;
-  box-shadow: 0 0 0 3px rgba(67, 130, 102, 0.2);
+  border-color: #7c6b9b;
+  box-shadow: 0 0 0 3px rgba(72, 30, 115, 0.2);
 }
 
 .form-control:disabled {
@@ -305,15 +311,17 @@ const switchForm = (toLogin) => {
   color: white;
   font-size: 16px;
   font-weight: 600;
-  background: #438266;
+  background: #7c6b9b;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
+  box-sizing: border-box;
+  /* 确保按钮也正确计算宽度 */
 }
 
 .btn:hover:not(:disabled) {
-  background: #366d53;
+  background: #4d317f;
 }
 
 .btn:disabled {
@@ -324,17 +332,21 @@ const switchForm = (toLogin) => {
 .switch-form {
   text-align: center;
   margin: 20px 0;
+  width: 100%;
+  /* 确保链接容器占满宽度 */
 }
 
 .switch-form a {
-  color: #438266;
+  color: #7c6b9b;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
+  display: inline-block;
+  /* 确保链接正确显示 */
 }
 
 .switch-form a:hover:not(.disabled-link) {
-  color: #25723b;
+  color: #4d317f;
   text-decoration: underline;
 }
 
@@ -349,11 +361,36 @@ const switchForm = (toLogin) => {
   margin-top: 16px;
   color: #666;
   font-size: 12px;
+  width: 100%;
+  /* 确保测试账号提示占满宽度 */
 }
 
+/* 表单样式修复 */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 响应式设计 */
 @media (max-width: 480px) {
   .container {
     padding: 30px;
+    margin: 0 20px;
+    /* 移动端添加边距 */
+    width: calc(100% - 40px);
+    /* 减去边距 */
   }
+
+  .form-control {
+    padding: 12px 16px;
+    /* 移动端调整padding */
+  }
+}
+
+/* 全局盒子模型重置 */
+* {
+  box-sizing: border-box;
 }
 </style>

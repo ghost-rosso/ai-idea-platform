@@ -6,24 +6,30 @@ import Admin from '@/views/Admin.vue' // 导入管理员页面
 const routes = [
   {
     path: '/',
-    component: Home
-    // 移除 requiresAuth，因为我们现在有更简单的处理方式
+    component: Home,
+    meta: { title: '首页 - AI灵感笔记' } 
   },
   {
     path: '/login',
-    component: Auth
-    // 移除 guestOnly
+    component: Auth,
+    meta: { title: '登录 - AI灵感笔记' } 
   },
   {
     path: '/admin',
-    component: Admin
-    // 简单的管理员路由，不需要复杂meta
+    component: Admin,
+    meta: { title: '管理后台 - AI灵感笔记' }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to) => {
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
 })
 
 // // 可选：极简路由守卫（如果不需要可以完全删除）

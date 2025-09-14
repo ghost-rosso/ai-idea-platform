@@ -2,11 +2,11 @@
 import { NLayout, NLayoutHeader, NSpace, NButton, NH2 } from 'naive-ui'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
-import { useRouter } from 'vue-router' // 导入useRouter
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
-const router = useRouter() // 获取路由实例
+const router = useRouter()
 
 // 跳转到登录页
 const goToLogin = () => {
@@ -21,47 +21,216 @@ const goToAdmin = () => {
 
 <template>
   <n-layout style="height: 100vh;">
-    <!-- 顶部导航栏 -->
-    <n-layout-header bordered style="height: 64px;">
-      <n-space justify="space-between" align="center" style="padding: 12px 24px; height: 100%;">
-        <n-h2 style="margin: 0;">AI灵感笔记平台</n-h2>
-        <div>
-          <!-- 显示用户名 -->
-          <span v-if="userStore.username">
+    <!-- 顶部导航栏 - 浅米色主题 -->
+    <n-layout-header class="header">
+      <n-space justify="space-between" align="center" class="header-content">
+        <!-- 左侧Logo和标题 -->
+        <n-space align="center" :size="16">
+          <div class="logo">
+            <span class="logo-icon">📝</span>
+          </div>
+          <n-h2 class="title">AI灵感笔记</n-h2>
+        </n-space>
+
+        <!-- 右侧操作区 -->
+        <n-space align="center" :size="8">
+          <!-- 欢迎信息 -->
+          <span v-if="userStore.username" class="welcome-text">
             欢迎, {{ userStore.username }}
           </span>
 
           <!-- 管理员按钮 -->
-          <n-button v-if="userStore.isAdmin" @click="goToAdmin" size="small" type="warning" style="margin-left: 8px;">
+          <n-button v-if="userStore.isAdmin" @click="goToAdmin" size="small" class="admin-btn">
+            <template #icon>
+              <span>⚙️</span>
+            </template>
             管理后台
           </n-button>
 
-          <!-- 退出按钮（已登录时显示） -->
-          <n-button v-if="userStore.username" @click="userStore.logout" size="small" style="margin-left: 8px;">
+          <!-- 退出按钮 -->
+          <n-button v-if="userStore.username" @click="userStore.logout" size="small" class="logout-btn">
+            <template #icon>
+              <span>🚪</span>
+            </template>
             退出
           </n-button>
 
-          <!-- 登录/注册按钮（未登录时显示） -->
-          <n-button v-else @click="goToLogin" size="small" style="margin-left: 8px;">
+          <!-- 登录/注册按钮 -->
+          <n-button v-else @click="goToLogin" size="small" class="login-btn">
+            <template #icon>
+              <span>🔐</span>
+            </template>
             登录/注册
           </n-button>
 
           <!-- 主题切换按钮 -->
-          <n-button @click="themeStore.toggleTheme" size="small" style="margin-left: 8px;">
-            {{ themeStore.isDark ? '☀️ 亮色' : '🌙 暗色' }}
+          <n-button @click="themeStore.toggleTheme" size="small" class="theme-btn" circle>
+            <template #icon>
+              <span>{{ themeStore.isDark ? '☀️' : '🌙' }}</span>
+            </template>
           </n-button>
-        </div>
+        </n-space>
       </n-space>
     </n-layout-header>
 
     <!-- 主要内容区域 -->
-    <n-layout-content style="height: calc(100vh - 64px);">
+    <n-layout-content style="height: calc(100vh - 70px);">
       <router-view />
     </n-layout-content>
   </n-layout>
 </template>
 
 <style scoped>
+/* 导航栏容器 */
+.header {
+  height: 70px;
+  background: linear-gradient(135deg, #dbceaa 0%, #dfc8a1 100%);
+  border-bottom: 1px solid #e8dfce;
+  box-shadow: 0 2px 12px rgba(139, 119, 101, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+/* 导航栏内容 */
+.header-content {
+  padding: 0 28px;
+  height: 100%;
+}
+
+/* Logo样式 */
+.logo {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #d4c5a8 0%, #b8a98c 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(139, 119, 101, 0.15);
+}
+
+.logo-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* 标题样式 */
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #8b7765 0%, #6d5d4f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  -webkit-text-stroke: 0.5px #aa9179;
+  text-shadow: 0 1px 2px rgba(200, 100, 12, 0.1);
+}
+
+/* 欢迎文本 */
+.welcome-text {
+  color: #8b7765;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 0 12px;
+  border-right: 1px solid #e8dfce;
+  margin-right: 8px;
+  -webkit-text-stroke: 0.5px #aa9179;
+}
+
+/* 按钮统一样式 */
+:deep(.n-button) {
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* 管理员按钮 */
+.admin-btn {
+  background: linear-gradient(135deg, #a89276 0%, #8b7765 100%) !important;
+  border: none;
+  color: white !important;
+}
+
+.admin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 119, 101, 0.2);
+}
+
+/* 登录按钮 */
+.login-btn {
+  background: linear-gradient(135deg, #d4c5a8 0%, #b8a98c 100%) !important;
+  border: none;
+  color: #6d5d4f !important;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 119, 101, 0.15);
+}
+
+/* 退出按钮 */
+.logout-btn {
+  background: rgba(139, 119, 101, 0.1) !important;
+  border: 1px solid #d4c5a8;
+  color: #8b7765 !important;
+}
+
+.logout-btn:hover {
+  background: rgba(139, 119, 101, 0.15) !important;
+  border-color: #b8a98c;
+}
+
+/* 主题切换按钮 */
+.theme-btn {
+  background: rgba(139, 119, 101, 0.08) !important;
+  border: 1px solid rgba(139, 119, 101, 0.2);
+  color: #8b7765 !important;
+  width: 36px;
+  height: 36px;
+}
+
+.theme-btn:hover {
+  background: rgba(139, 119, 101, 0.15) !important;
+  border-color: rgba(139, 119, 101, 0.3);
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .header {
+  background: linear-gradient(135deg, #3a3229 0%, #2a241d 100%);
+  border-bottom-color: #443c31;
+}
+
+[data-theme="dark"] .title {
+  background: linear-gradient(135deg, #d4c5a8 0%, #b8a98c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .welcome-text {
+  color: #b8a98c;
+  border-right-color: #5a5043;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .header-content {
+    padding: 0 16px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .welcome-text {
+    display: none;
+  }
+
+  :deep(.n-button__content) {
+    font-size: 12px;
+  }
+}
+
 .n-layout {
   height: 100vh;
 }
