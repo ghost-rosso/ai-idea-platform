@@ -3,7 +3,6 @@ import { NLayout, NLayoutSider, NLayoutContent, NH3, NEmpty, NDivider, NButton, 
 import { ref, onMounted, nextTick, computed, watch } from 'vue'
 import { useNoteStore } from '@/stores/noteStore'
 import { simulateAIThinking } from '@/utils/aiMock'
-import * as echarts from 'echarts'
 
 const noteStore = useNoteStore()
 const searchKeyword = ref('')
@@ -11,7 +10,6 @@ const showDeleteModal = ref(false)
 const newTag = ref('')
 const isLoadingAI = ref(false)
 const aiResult = ref(null)
-let chartInstance = null
 
 // 过滤后的笔记列表
 const filteredNotes = computed(() => {
@@ -113,150 +111,6 @@ const applyRelatedIdea = (idea) => {
 const clearAIResults = () => {
   aiResult.value = null
 }
-
-// 灵感图谱相关函数
-const initGraphData = () => {
-  const nodes = noteStore.notes.map(note => ({
-    id: note.id,
-    name: note.title,
-    symbolSize: 30 + (note.content.length / 20),
-    itemStyle: {
-      color: getNodeColor(note.tags)
-    }
-  }))
-
-  const links = []
-  // 创建关联关系
-  for (let i = 0; i < nodes.length - 1; i++) {
-    if (Math.random() > 0.4) {
-      links.push({
-        source: nodes[i].id,
-        target: nodes[i + 1].id,
-        value: '关联'
-      })
-    }
-  }
-
-  return { nodes, links }
-}
-
-// 根据标签获取节点颜色
-const getNodeColor = (tags) => {
-  const colorMap = {
-    '教育': '#ff6b6b',
-    '科技': '#4ecdc4',
-    '区块链': '#45b7d1',
-    '技术': '#f9ca24',
-    'AI': '#6c5ce7',
-    '未来': '#a29bfe',
-    '元宇宙': '#fd79a8',
-    '社交': '#00b894',
-    '未分类': '#dfe6e9'
-  }
-
-  for (const tag of tags) {
-    if (colorMap[tag]) {
-      return colorMap[tag]
-    }
-  }
-  return '#dfe6e9'
-}
-
-// 初始化图表
-const initChart = () => {
-  nextTick(() => {
-    const chartDom = document.getElementById('idea-graph')
-    if (!chartDom) return
-
-    // 销毁旧的图表实例
-    if (chartInstance) {
-      chartInstance.dispose()
-    }
-
-    chartInstance = echarts.init(chartDom)
-    const graphData = initGraphData()
-
-    const option = {
-      title: {
-        text: '灵感关联图谱',
-        left: 'center',
-        textStyle: {
-          fontSize: 16,
-          fontWeight: 'normal'
-        }
-      },
-      tooltip: {
-        formatter: function (params) {
-          if (params.dataType === 'node') {
-            const note = noteStore.notes.find(n => n.id === params.data.id)
-            return `${note.title}<br/>标签: ${note.tags.join(', ')}`
-          }
-          return `${params.data.source} → ${params.data.target}`
-        }
-      },
-      animation: true,
-      series: [{
-        type: 'graph',
-        layout: 'force',
-        force: {
-          repulsion: 200,
-          edgeLength: 100
-        },
-        roam: true,
-        focusNodeAdjacency: true,
-        data: graphData.nodes,
-        links: graphData.links,
-        edgeSymbol: ['circle', 'arrow'],
-        edgeSymbolSize: [4, 8],
-        lineStyle: {
-          width: 2,
-          curveness: 0.2
-        },
-        label: {
-          show: true,
-          position: 'right',
-          formatter: '{b}',
-          fontSize: 12
-        },
-        emphasis: {
-          focus: 'adjacency',
-          lineStyle: {
-            width: 3
-          }
-        }
-      }]
-    }
-
-    chartInstance.setOption(option)
-
-    // 添加点击事件
-    chartInstance.on('click', (params) => {
-      if (params.dataType === 'node') {
-        const note = noteStore.notes.find(n => n.id === params.data.id)
-        if (note) {
-          noteStore.setCurrentNote(note.id)
-        }
-      }
-    })
-  })
-}
-
-// 响应窗口大小变化
-const handleResize = () => {
-  if (chartInstance) {
-    chartInstance.resize()
-  }
-}
-
-// 监听笔记数据变化，更新图谱
-watch(() => noteStore.notes, () => {
-  initChart()
-}, { deep: true })
-
-onMounted(() => {
-  initChart()
-  window.addEventListener('resize', handleResize)
-})
 </script>
 
 <template>
@@ -342,12 +196,6 @@ onMounted(() => {
           最后更新: {{ new Date(noteStore.currentNote.updatedAt).toLocaleString() }}
         </div>
       </template>
-
-      <!-- 灵感图谱区域 -->
-      <n-divider class="divider" />
-      <div class="graph-container">
-        <div id="idea-graph" class="graph-chart"></div>
-      </div>
     </n-layout-content>
 
     <!-- 右侧AI面板 -->
@@ -661,24 +509,6 @@ onMounted(() => {
   text-align: right;
 }
 
-.divider {
-  margin: 24px 0;
-  border-color: #e8dfce !important;
-}
-
-.graph-container {
-  border: 1px solid #e8dfce;
-  border-radius: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(139, 119, 101, 0.08);
-}
-
-.graph-chart {
-  width: 100%;
-  height: 300px;
-}
-
 /* AI侧边栏 */
 .ai-sidebar {
   background: linear-gradient(135deg, #f8f4e9 0%, #f1e8d8 100%) !important;
@@ -846,10 +676,6 @@ onMounted(() => {
     padding: 16px;
   }
 
-  .graph-chart {
-    height: 250px;
-  }
-
   .ai-sidebar {
     width: 280px !important;
   }
@@ -868,11 +694,6 @@ onMounted(() => {
 [data-theme="dark"] .content-textarea {
   background: rgba(58, 50, 41, 0.9);
   color: #d4c5a8;
-  border-color: #5a5043;
-}
-
-[data-theme="dark"] .graph-container {
-  background: rgba(58, 50, 41, 0.9);
   border-color: #5a5043;
 }
 
