@@ -14,13 +14,10 @@ const goToAdmin = () => router.push('/admin')
 
 <template>
   <n-layout style="height: 100vh;">
-    <!-- 顶部导航栏 - 浅米色主题 -->
     <n-layout-header class="header">
       <n-space justify="space-between" align="center" class="header-content">
-        <!-- 左侧 Logo 和标题 -->
         <n-space align="center" :size="16">
           <div class="logo">
-            <!-- 旧 emoji 已替换为 PNG -->
             <img src="/logo.png" alt="logo" class="logo-img" />
           </div>
           <n-h2 class="title">AI灵感笔记</n-h2>
@@ -64,7 +61,7 @@ const goToAdmin = () => router.push('/admin')
 </template>
 
 <style scoped>
-/* ========= 导航栏容器 ========= */
+/* ---------导航栏------ */
 .header {
   height: 70px;
   background: linear-gradient(135deg, #e8dfc4 0%, #f9ecd7 100%);
@@ -78,7 +75,6 @@ const goToAdmin = () => router.push('/admin')
   height: 100%;
 }
 
-/* ========= Logo 区域 ========= */
 .logo {
   width: 40px;
   height: 40px;
@@ -92,13 +88,11 @@ const goToAdmin = () => router.push('/admin')
 
 .logo-img {
   width: 24px;
-  /* 按需调整 */
   height: 24px;
   object-fit: contain;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
-/* ========= 标题 ========= */
 .title {
   margin: 0;
   font-size: 22px;
@@ -111,7 +105,7 @@ const goToAdmin = () => router.push('/admin')
   text-shadow: 0 1px 2px rgba(200, 100, 12, 0.1);
 }
 
-/* ========= 欢迎文本 ========= */
+
 .welcome-text {
   color: #8b7765;
   font-size: 16px;
@@ -122,7 +116,7 @@ const goToAdmin = () => router.push('/admin')
   -webkit-text-stroke: 0.5px #aa9179;
 }
 
-/* ========= 按钮统一样式 ========= */
+/* 按钮样式  */
 :deep(.n-button) {
   font-weight: 500;
   border-radius: 8px;
@@ -175,7 +169,7 @@ const goToAdmin = () => router.push('/admin')
   border-color: rgba(139, 119, 101, 0.3);
 }
 
-/* ========= 暗色主题适配 ========= */
+/* 暗色主题 */
 [data-theme="dark"] .header {
   background: linear-gradient(135deg, #3a3229 0%, #2a241d 100%);
   border-bottom-color: #443c31;
@@ -193,7 +187,7 @@ const goToAdmin = () => router.push('/admin')
   border-right-color: #5a5043;
 }
 
-/* ========= 响应式 ========= */
+/* 响应式布局 */
 @media (max-width: 768px) {
   .header-content {
     padding: 0 16px;
