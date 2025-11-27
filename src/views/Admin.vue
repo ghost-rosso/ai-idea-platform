@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed, h } from 'vue'
 import { useNoteStore } from '@/stores/noteStore'
-import { useRouter } from 'vue-router' // 导入useRouter
+import { useRouter } from 'vue-router' 
 import { NDataTable, NButton, NH2, NTag, NSpace, NInput, NStatistic, NGrid, NGi, NCard } from 'naive-ui'
 
 const noteStore = useNoteStore()
-const router = useRouter() // 获取路由实例
+const router = useRouter() 
 const searchKeyword = ref('')
 
 // 返回首页
@@ -166,7 +166,6 @@ const stats = computed(() => ({
   min-height: 100vh;
 }
 
-/* 头部区域 */
 .header-section {
   display: flex;
   align-items: center;
@@ -235,7 +234,6 @@ const stats = computed(() => ({
   color: #8b7765;
 }
 
-/* 表格行样式 */
 :deep(.table-row) {
   transition: background-color 0.2s ease;
 }

@@ -438,7 +438,7 @@ const clearAIResults = () => {
 }
 
 .title-input {
-  width: 100%;
+  width: 95%;
   padding: 16px;
   border: 1px solid #e8dfce;
   border-radius: 12px;

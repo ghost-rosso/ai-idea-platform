@@ -124,7 +124,7 @@ const handleRegister = async (e) => {
 
 // 切换表单时清除信息
 const switchForm = (toLogin) => {
-  if (isLoading.value) return // 加载时禁止切换
+  if (isLoading.value) return 
 
   isLoginForm.value = toLogin
   formData.value.password = ''
@@ -137,7 +137,7 @@ const switchForm = (toLogin) => {
     <div class="container">
       <!-- Logo -->
       <div class="logo">
-        <img src="/images/logo.png" alt="LEON" class="logo-img">
+        <img src="/public/logo.png" alt="LEON" class="logo-img">
         <h1 class="logo-text">AI灵感笔记</h1>
       </div>
 
@@ -228,7 +228,6 @@ const switchForm = (toLogin) => {
   width: 100%;
   max-width: 450px;
   box-sizing: border-box;
-  /* 添加这个 */
 }
 
 .logo {
